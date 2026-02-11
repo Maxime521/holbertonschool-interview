@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Utilities for checking if a set of lockboxes can all be opened"""
 
+
 def canUnlockAll(boxes):
     """Check if all the boxes can be opened"""
 
