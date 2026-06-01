@@ -1,41 +1,43 @@
 #!/usr/bin/python3
-"""
-Prints all possible N-queens solutions as lists of [row, col] pairs.
-"""
+"""Solve the N queens puzzle using backtracking."""
 
 import sys
 
 
-def is_safe(queens, row, col):
-    """Return True if is safe."""
-    for r, c in queens:
-        if c == col or abs(c - col) == abs(r - row):
-            return False
-    return True
-
-
-def solve(n, row, queens, solutions):
-    """place queens row by row."""
+def solve_nqueens(n, row, cols, diag1, diag2, positions):
+    """Backtracking search for valid queen placements."""
     if row == n:
-        solutions.append([[r, c] for r, c in queens])
+        solution = [[r, positions[r]] for r in range(n)]
+        print(solution)
         return
 
     for col in range(n):
-        if is_safe(queens, row, col):
-            queens.append([row, col])
-            solve(n, row + 1, queens, solutions)
-            queens.pop()
+        d1 = row - col
+        d2 = row + col
+        if col in cols or d1 in diag1 or d2 in diag2:
+            continue
+
+        cols.add(col)
+        diag1.add(d1)
+        diag2.add(d2)
+        positions[row] = col
+
+        solve_nqueens(n, row + 1, cols, diag1, diag2, positions)
+
+        cols.remove(col)
+        diag1.remove(d1)
+        diag2.remove(d2)
 
 
 def main():
-    """Solve and print solutions."""
+    """Entry point for argument validation and solving."""
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
 
     try:
         n = int(sys.argv[1])
-    except Exception:
+    except ValueError:
         print("N must be a number")
         sys.exit(1)
 
@@ -43,10 +45,7 @@ def main():
         print("N must be at least 4")
         sys.exit(1)
 
-    solutions = []
-    solve(n, 0, [], solutions)
-    for sol in solutions:
-        print(sol)
+    solve_nqueens(n, 0, set(), set(), set(), [-1] * n)
 
 
 if __name__ == "__main__":
